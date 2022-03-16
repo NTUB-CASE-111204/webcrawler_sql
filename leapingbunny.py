@@ -5,10 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 
 conn = psycopg2.connect(host="ec2-54-209-221-231.compute-1.amazonaws.com", user="ikojmqzefffjen", password ="079aad0bfbbc125c2f41389d7d65a83fe63f775aa42799b01120e8edb480ab2f", dbname="d28e9f04ls9tcu")
-
 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 cursor = conn.cursor()
-
 print("資料庫連線成功！")
 
 #------------------------
@@ -40,13 +38,15 @@ for block in soup.select('.field-content a'):
     for name in block:
         cursor = conn.cursor()
         a_name = (name.text)
-        if a_name =='':
-            continue
-        elif any(a_name in s for s in db):
-            cursor.execute("UPDATE public.brand SET leapingbunny = True where b_name = '%s'"%(a_name))
-            print("found/" + a_name)
-        else:
-            print(a_name)
-            cursor.execute("INSERT INTO public.brand(b_name, leapingbunny) VALUES (%s, %s);",(a_name, True))
+        if a_name.find("%s" + "\'" + "%s"):
+            a_name = a_name.replace("'","\'")
+            if a_name =='':
+                continue
+            elif any(a_name in s for s in db):
+                cursor.execute("UPDATE public.brand SET leapingbunny = True where b_name = '%s'"%(a_name))
+                print("found/" + a_name)
+            else:
+                print(a_name)
+                cursor.execute("INSERT INTO public.brand(b_name, leapingbunny) VALUES (%s, %s);",(a_name, True))
 
 print('資料新增成功！')
