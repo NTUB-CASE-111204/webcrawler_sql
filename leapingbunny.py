@@ -5,7 +5,11 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import time
+#import csv #這是測試排程的Python程式
 
+# Run.py
+import pandas
+import datetime
 
 
 conn = psycopg2.connect(host="ec2-54-209-221-231.compute-1.amazonaws.com", user="ikojmqzefffjen", password ="079aad0bfbbc125c2f41389d7d65a83fe63f775aa42799b01120e8edb480ab2f", dbname="d28e9f04ls9tcu")
@@ -65,4 +69,12 @@ while (j < len(db)):
 print(list_a) 
 driver.quit()
 
+# 取得現在時間
+now = datetime.datetime.now()
+txt = '上次更新時間為：' + str(now)
 
+#轉成df
+df = pandas.DataFrame([txt], index=['UpdateTime'])
+
+# 存出檔案
+df.to_csv('log.csv', header=False)
