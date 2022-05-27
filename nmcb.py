@@ -5,6 +5,7 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import time
+from datetime import datetime
 
 conn = psycopg2.connect(host="ec2-54-209-221-231.compute-1.amazonaws.com", user="ikojmqzefffjen", password ="079aad0bfbbc125c2f41389d7d65a83fe63f775aa42799b01120e8edb480ab2f", dbname="d28e9f04ls9tcu")
 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
@@ -33,20 +34,21 @@ soup = BeautifulSoup(driver.page_source, 'html.parser')
 for block in soup.select('.Img a'):
     for name in block:
         title = block.find('img').get('alt')
+        uptime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         #print(title)
         if title =='':
             continue
         elif any(title in s for s in db):
             if(title.count("'") >= 1):
                 title = title.replace("'", "%")
-                cursor.execute("UPDATE public.brand SET nmcb = %s where b_name like '%s'"%(True, title))
+                cursor.execute("UPDATE public.brand SET nmcb = %s, updatetime = '%s' where b_name like '%s'"%(True, uptime, title))
                 #print(title)
             else:
-                cursor.execute("UPDATE public.brand SET nmcb = %s where b_name = '%s'"%(True, title))
+                cursor.execute("UPDATE public.brand SET nmcb = %s, updatetime = '%s' where b_name = '%s'"%(True, uptime, title))
                 #print("found/" + title)
         else:
             print(title)
-            cursor.execute("INSERT INTO public.brand(b_name, nmcb) VALUES (%s, %s);",(title, True))
+            cursor.execute("INSERT INTO public.brand(b_name, nmcb, updatetime) VALUES (%s, %s, %s);",(title, True, uptime))
         list_a.append(title)     
 j=0   
 while (j < len(db)):

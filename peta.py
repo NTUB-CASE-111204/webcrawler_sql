@@ -3,6 +3,7 @@ import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime
 #from jedi.inference.value import iterable
 #from test.test_xmlrpc import alist
 
@@ -29,19 +30,21 @@ for i in range(2,15): #2~13頁
     url = "https://crueltyfree.peta.org/companies-dont-test/page/" + str(i) #下一頁的網址
     for name in sel:
         a_name = (name.text)
+        uptime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        #print(uptime)
         if a_name =='':      #跳過空白的資料
             continue
         elif any(a_name in s for s in db):  #確認標題是否已存在資料庫
             if(a_name.count("'") >= 1):  #標題裡有'符號
                 a_name =a_name.replace("'","%")
-                cursor.execute("UPDATE public.brand SET peta = %s where b_name like '%s'"%(True, a_name))   #更新資料peta為True
+                cursor.execute("UPDATE public.brand SET peta = %s, updatetime = '%s' where b_name like '%s'"%(True, uptime, a_name))   #更新資料peta為True
                 #print("update///" + a_name)
             else:
-                cursor.execute("UPDATE public.brand SET peta = %s where b_name = '%s'"%(True, a_name))  #更新資料peta為True
+                cursor.execute("UPDATE public.brand SET peta = %s, updatetime = '%s' where b_name = '%s'"%(True, uptime, a_name))  #更新資料peta為True
                 #print("found/" + a_name)
         else:
-            print(a_name)
-            cursor.execute("INSERT INTO public.brand(b_name, peta) VALUES (%s, %s);",(a_name, True))    #新增資料
+            #print(uptime)
+            cursor.execute("INSERT INTO public.brand(b_name, peta, updatetime) VALUES (%s, %s, %s);",(a_name, True, uptime))    #新增資料
         list_a.append(a_name)     #將a_name放進list最後
         #print(list_a)
         
