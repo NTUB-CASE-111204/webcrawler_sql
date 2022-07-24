@@ -10,6 +10,7 @@ from datetime import datetime
 conn = psycopg2.connect(host="ec2-54-209-221-231.compute-1.amazonaws.com", user="ikojmqzefffjen", password ="079aad0bfbbc125c2f41389d7d65a83fe63f775aa42799b01120e8edb480ab2f", dbname="d28e9f04ls9tcu")
 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 cursor = conn.cursor()
+cursor2 = conn.cursor()
 print("資料庫連線成功！")
 
 #------------------------
@@ -24,7 +25,10 @@ cursor.execute("SELECT b_name FROM public.brand")
 db = list(cursor.fetchall())
 print(db)
 list_a = []
-    
+cursor2.execute("SELECT b_name FROM public.brand WHERE nmcb = True")
+nmcbdb = list(cursor2.fetchall())
+print (len(nmcbdb))
+
 for i in range(1,2):
     driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
     time.sleep(1)
@@ -51,8 +55,8 @@ for block in soup.select('.Img a'):
             cursor.execute("INSERT INTO public.brand(b_name, nmcb, updatetime) VALUES (%s, %s, %s);",(title, True, uptime))
         list_a.append(title)     
 j=0   
-while (j < len(db)):
-    te = str(db[j]).strip('(,)')  #去除資料庫前後的(,)符號
+while (j < len(nmcbdb)):
+    te = str(nmcbdb[j]).strip('(,)')  #去除資料庫前後的(,)符號
     te = te.replace("'", "")    #將'改為空白
     te = te.replace('"', '')    #將"改為空白
     if(te not in list_a):       #若資料庫的資料不存在於list_a

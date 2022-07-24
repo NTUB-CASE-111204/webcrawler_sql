@@ -10,6 +10,7 @@ from datetime import datetime
 conn = psycopg2.connect(host="ec2-54-209-221-231.compute-1.amazonaws.com", user="ikojmqzefffjen", password ="079aad0bfbbc125c2f41389d7d65a83fe63f775aa42799b01120e8edb480ab2f", dbname="d28e9f04ls9tcu")
 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 cursor = conn.cursor()
+cursor2 = conn.cursor()
 print("資料庫連線成功！")
 
 #------------------------
@@ -21,8 +22,11 @@ cursor.execute("SELECT b_name FROM public.brand")
 db = list(cursor.fetchall())
 print(db)
 list_a = []
+cursor2.execute("SELECT b_name FROM public.brand WHERE peta = True")
+petadb = list(cursor2.fetchall())
+print (len(petadb))
 
-for i in range(2,15): #2~13頁
+for i in range(2,4): #2~13頁
     r = requests.get(url)
     soup = BeautifulSoup(r.text,"html.parser")
     sel = soup.select("ul.search-results a") #標題
@@ -49,8 +53,8 @@ for i in range(2,15): #2~13頁
         #print(list_a)
         
 j=0   
-while (j < len(db)):
-    te = str(db[j]).strip('(,)')  #去除資料庫前後的(,)符號
+while (j < len(petadb)):
+    te = str(petadb[j]).strip('(,)')  #去除資料庫前後的(,)符號
     te = te.replace("'", "")    #將'改為空白
     te = te.replace('"', '')    #將"改為空白
     if(te not in list_a):       #若資料庫的資料不存在於list_a
