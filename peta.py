@@ -26,7 +26,7 @@ cursor2.execute("SELECT b_name FROM public.brand WHERE peta = True")
 petadb = list(cursor2.fetchall())
 print (len(petadb))
 
-for i in range(2,4): #2~13頁
+for i in range(2,123): #2~13頁
     r = requests.get(url)
     soup = BeautifulSoup(r.text,"html.parser")
     sel = soup.select("ul.search-results a") #標題
@@ -61,5 +61,7 @@ while (j < len(petadb)):
         print(te)
         cursor.execute("UPDATE public.brand SET peta = False where b_name like '%s'"%(te))      #更新資料peta為False
     j+=1    
+    
+cursor.execute("DELETE FROM public.brand WHERE peta = False AND leapingbunny = False AND nmcb = False")
 print('資料新增成功！')
 

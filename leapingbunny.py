@@ -65,5 +65,6 @@ while (j < len(leapingbunnydb)):
         cursor.execute("UPDATE public.brand SET leapingbunny = False where b_name like '%s'"%(te)) #更新資料leapingbunny為False
     j+=1   
 #print(list_a) 
+cursor.execute("DELETE FROM public.brand WHERE peta = False AND leapingbunny = False AND nmcb = False")
 driver.quit()
 print('資料新增成功！')
