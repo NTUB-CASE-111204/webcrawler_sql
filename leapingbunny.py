@@ -30,7 +30,7 @@ print (len(leapingbunnydb))
 list_a = []
 
     
-for i in range(1,30):
+for i in range(1,91):
     driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
     time.sleep(1)
     
