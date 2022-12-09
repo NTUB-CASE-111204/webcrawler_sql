@@ -39,7 +39,7 @@ for block in soup.select('.Img a'):
     for name in block:
         title = block.find('img').get('alt')
         uptime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        #print(title)
+        print(title)
         if title =='':
             continue
         elif any(title in s for s in db):
@@ -57,11 +57,13 @@ for block in soup.select('.Img a'):
 j=0   
 while (j < len(nmcbdb)):
     te = str(nmcbdb[j]).strip('(,)')  #去除資料庫前後的(,)符號
-    te = te.replace("'", "")    #將'改為空白
-    te = te.replace('"', '')    #將"改為空白
+    te = te.strip('"')    #去除前後'
+    te = te.strip("'")    #去除前後"
+    te = te.replace("'", "%")
     if(te not in list_a):       #若資料庫的資料不存在於list_a
         #print(te)
-        cursor.execute("UPDATE public.brand SET nmcb = False where b_name like '%s'"%(te))      #更新資料peta為False
+        uptime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        cursor.execute("UPDATE public.brand SET nmcb = %s, updatetime = '%s' where b_name like '%s'"%(False, uptime, te))      #更新資料peta為False
     j+=1   
 #print(list_a) 
 cursor.execute("DELETE FROM public.brand WHERE peta = False AND leapingbunny = False AND nmcb = False")
